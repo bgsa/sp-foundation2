@@ -3,23 +3,16 @@
 #ifndef WINDOWS_PLATFORM_HEADER
 #define WINDOWS_PLATFORM_HEADER
 
-# ifndef WIN32_LEAN_AND_MEAN
+#ifndef WIN32_LEAN_AND_MEAN
 	#define WIN32_LEAN_AND_MEAN
-# endif
+#endif
 #define NOMINMAX
 #include <Windows.h>
 #undef near
 #undef far
 
-#ifdef API_IMPORT
-	#define API_INTERFACE __declspec(dllimport)		
-#else
-	#ifdef API_EXPORT
-		#define API_INTERFACE __declspec(dllexport)
-	#else
-		#define API_INTERFACE
-	#endif
-#endif
+#define API_IMPORT __declspec(dllimport)		
+#define API_EXPORT __declspec(dllexport)
 
 #define ESUTIL_API  __cdecl
 #define ESCALLBACK  __cdecl

@@ -3,15 +3,8 @@
 #ifndef MACOS_PLATFORM_HEADER
 #define MACOS_PLATFORM_HEADER
 
-#ifdef API_IMPORT
-	#define API_INTERFACE __attribute__((visibility("hidden")))
-#else
-	#ifdef API_EXPORT
-		#define API_INTERFACE __attribute__((visibility("default")))
-	#else
-		#define API_INTERFACE
-	#endif
-#endif
+#define API_IMPORT __attribute__((visibility("hidden")))
+#define API_EXPORT __attribute__((visibility("default")))
 
 #define ESUTIL_API
 #define ESCALLBACK

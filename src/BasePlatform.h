@@ -6,6 +6,12 @@
 
 #define PRAGMA(content) _Pragma(#content)
 
+#ifdef __cplusplus 
+	#define EXTERN_C extern "C"
+#else
+	#define EXTERN_C
+#endif
+
 #if defined (_MSC_VER)
 	#include <codeanalysis\warnings.h>
 
