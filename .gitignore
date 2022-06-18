@@ -3,6 +3,9 @@
 build/lib/
 build/bin/
 
+# Vendor folders
+vendor/
+
 # Compiled Object files
 *.slo
 *.lo

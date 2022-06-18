@@ -2,7 +2,7 @@
 
 SET BUILD_DIR=output
 SET BUILD_TYPE=Release
-SET SHARED_LIB=ON
+SET SHARED_LIB=OFF
 
 if exist %BUILD_DIR% ( rmdir /s/q %BUILD_DIR% )
 mkdir %BUILD_DIR%

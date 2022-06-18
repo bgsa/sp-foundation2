@@ -10,7 +10,7 @@ option(ARCH             "Define the processor architecture (x86 / x86_64 / armv8
 option(FFMPEG_ENABLED   "Enable FFMPEG" OFF)
 
 set (PROJECT_DIR  ${CMAKE_CURRENT_SOURCE_DIR})
-set (LIB_DIR ${PROJECT_DIR}/vendor/lib/${ARCH}/${CMAKE_BUILD_TYPE})
+set (LIB_DIR ${PROJECT_DIR}/vendor/lib)
 set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_DIR}/build/lib/${ARCH})
 set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_DIR}/build/lib/${ARCH})
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_DIR}/build/lib/${ARCH})
@@ -102,9 +102,9 @@ file(GLOB SOURCES
 )
 
 include_directories(
-	/usr/local/include
-	${SOLUTION_DIR}/vendor/include
-	src
+	/usr/local/include/
+	${PROJECT_DIR}/vendor/include/
+	src/
 )
 
 link_directories(
@@ -123,5 +123,9 @@ message(STATUS "FLAGS: " ${CUSTOM_DEFINITIONS})
 add_definitions( ${CUSTOM_DEFINITIONS} )
 
 target_link_libraries(${PROJECT_NAME}
-    ${FFMPEG_LIBRARY}
+    #${FFMPEG_LIBRARY}
+	#${LIB_DIR}/avformat.lib
+	#${LIB_DIR}/swscale.lib
+	#${LIB_DIR}/avutil.lib
+	#${LIB_DIR}/avcodec.lib
 )
