@@ -107,6 +107,12 @@ void sp_video_stream_properties_init(SpVideoStream* stream)
 
 void sp_video_stream_init(SpVideoStream* stream)
 {
+#ifdef DEBUG
+    //av_log_set_level(AV_LOG_DEBUG);
+#else
+    //av_log_set_level(AV_LOG_QUIET);
+#endif
+
     stream->streamContext = avformat_alloc_context();
     stream->videoCodecContext = nullptr;
     stream->videoCodecId = AV_CODEC_ID_NONE;
@@ -122,7 +128,7 @@ void sp_video_stream_init(SpVideoStream* stream)
     stream->readFrameStatus = -1;
 }
 
-void sp_video_stream_open(SpVideoStream* stream, const char* url, const SpVideoStreamProperties& outputProperties)
+void sp_video_stream_open(SpVideoStream* stream, const sp_char* url, const SpVideoStreamProperties& outputProperties)
 {
     stream->outputProperties = outputProperties;
 

@@ -91,7 +91,7 @@ EXTERN_C
 	/// <returns>Result of division</returns>
 	API_EXPORT inline sp_float divF(const sp_float value1, const sp_float value2)
 	{
-		sp_assert(!isCloseEnough(value2, ZERO_FLOAT), "DivisionByZeroException");
+		sp_assert(!isCloseEnoughF(value2, ZERO_FLOAT), "DivisionByZeroException");
 		return value1 / value2;
 	}
 	/// <summary>
@@ -102,7 +102,7 @@ EXTERN_C
 	/// <returns>Result of division</returns>
 	API_EXPORT inline sp_double divD(const sp_double value1, const sp_double value2)
 	{
-		sp_assert(!isCloseEnough(value2, ZERO_DOUBLE), "DivisionByZeroException");
+		sp_assert(!isCloseEnoughD(value2, ZERO_DOUBLE), "DivisionByZeroException");
 		return value1 / value2;
 	}
 

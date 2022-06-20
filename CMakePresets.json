@@ -7,10 +7,12 @@
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build/lib/${presetName}",
             "installDir": "${sourceDir}/build/lib/${presetName}",
-            "cacheVariables": {
-                "CMAKE_C_COMPILER": "cl.exe",
-                "CMAKE_CXX_COMPILER": "cl.exe"
-            },
+          "cacheVariables": {
+            "CMAKE_C_COMPILER": "cl.exe",
+            "CMAKE_CXX_COMPILER": "cl.exe",
+            "OPERATING_SYSTEM": "ON",
+            "FFMPEG_ENABLED": "ON"
+          },
             "condition": {
                 "type": "equals",
                 "lhs": "${hostSystemName}",
@@ -25,9 +27,10 @@
                 "value": "x64",
                 "strategy": "external"
             },
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug"
-            }
+          "cacheVariables": {
+            "CMAKE_BUILD_TYPE": "Debug",
+            "OPERATING_SYSTEM": "ON"
+          }
         },
         {
             "name": "x64-release",

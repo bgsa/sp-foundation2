@@ -1,8 +1,9 @@
 #ifndef SP_VIDEO_STREAM_PROPERTIES_HEADER
 #define SP_VIDEO_STREAM_PROPERTIES_HEADER
 
+#include <FFMpeg.h>
+
 #include <SpectrumFoundation.h>
-#include <libavformat/avformat.h>
 
 EXTERN_C
 {

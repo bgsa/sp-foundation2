@@ -2,6 +2,7 @@
 
 void sp_video_stream_manager_init(SpVideoStreamManager* manager, SpVideoStream* stream, const sp_uint maxFrameBuffer)
 {
+    manager->stream = stream;
     manager->maxFrameBuffer = maxFrameBuffer;
 
     manager->frames.resize(maxFrameBuffer); // FPS

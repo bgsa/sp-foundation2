@@ -1,14 +1,10 @@
 #ifndef SP_VIDEO_STREAM_HEADER
 #define SP_VIDEO_STREAM_HEADER
 
+#include <FFMpeg.h>
+
 #include <SpectrumFoundation.h>
 #include <VideoStreamProperties.h>
-
-#include <libavcodec/avcodec.h>
-#include <libavformat/avformat.h>
-#include <libavutil/imgutils.h>
-#include <libavutil/opt.h>
-#include <libswscale/swscale.h>
 
 EXTERN_C
 {
@@ -29,10 +25,6 @@ EXTERN_C
     };
 
     API_EXPORT void sp_video_stream_init(SpVideoStream* stream);
-
-    API_EXPORT void sp_video_stream_release_packet(AVPacket* packet);
-
-    API_EXPORT void sp_video_stream_release_frame(AVFrame* frame);
 
     API_EXPORT void sp_video_stream_open(SpVideoStream* stream, const sp_char* url, const SpVideoStreamProperties& outputProperties);
 

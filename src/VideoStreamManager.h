@@ -1,18 +1,13 @@
 #ifndef SP_VIDEO_STREAM_MANAGER_HEADER
 #define SP_VIDEO_STREAM_MANAGER_HEADER
 
-#include <SpectrumFoundation.h>
 #include <queue>
 #include <mutex>
 #include <condition_variable>
+#include <FFMpeg.h>
 
+#include <SpectrumFoundation.h>
 #include <VideoStream.h>
-
-#include <libavcodec/avcodec.h>
-#include <libavformat/avformat.h>
-#include <libavutil/imgutils.h>
-#include <libavutil/opt.h>
-#include <libswscale/swscale.h>
 
 EXTERN_C
 {
