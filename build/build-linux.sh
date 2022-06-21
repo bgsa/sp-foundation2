@@ -1,26 +1,21 @@
 #!/bin/bash
 
-source ../build-base-linux.sh
+set echo off
 
-build()
-{
-	make_build_dir
-	
-	cd $BUILD_DIR
+source build-base.sh
 
-	cmake ../../ -G "Unix Makefiles"                                      \
-		-DOPERATING_SYSTEM:STRING=LINUX             \
-		-DARCH:STRING=$1                                    \
-		-DCMAKE_BUILD_TYPE:STRING=$2                     \
-		-DBUILD_SHARED_LIBS:BOOL=$3                        \
-		-DCMAKE_ENABLE_EXPORTS:BOOL=ON
+make_build_dir
+cd $BUILD_DIR
 
-	cmake --build . --config $2
+cmake ../../ -G "Unix Makefiles"                                      \
+	-DOPERATING_SYSTEM:STRING=LINUX             \
+	-DARCH:STRING=x86_64                                    \
+	-DCMAKE_BUILD_TYPE:STRING=Debug                     \
+	-DBUILD_SHARED_LIBS:BOOL=ON                        \
+	-DCMAKE_ENABLE_EXPORTS:BOOL=ON
 
-	cd ../
+cmake --build . --config $2
 
-	clear_build_dir
-}
+cd ../
 
-build x86_64 Debug   ON
-build x86_64 Release ON
+# clear_build_dir
