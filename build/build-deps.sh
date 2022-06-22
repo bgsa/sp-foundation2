@@ -9,37 +9,17 @@ create_dir ../vendor/
 
 cd ../vendor/
 
-git clone git@github.com:FFmpeg/FFmpeg.git
+clear_dir  include/
+create_dir include/
 
-cd FFmpeg
+clear_dir  lib/
+create_dir lib/
+create_dir lib/x86_64/
 
-git checkout tags/n5.0.1 -b n5.0.1
-git pull
+clear_dir  bin/
+create_dir bin/
+create_dir bin/x86_64/
 
-./configure \
-  --arch=x86_64 \
-  --prefix="output/ffmpeg_build" \
-  --extra-libs="-lpthread -lm" \
-  --bindir="output/bin"
-  --disable-x86asm
-  --enable-shared \
-  --disable-x86asm \
-  --disable-programs \
-  --disable-doc \
-  --disable-swresample \
-  --disable-postproc \
-  --disable-avfilter \
-  --disable-w32threads \
-  --disable-dct \
-  --disable-dwt \
-  --disable-lsp  \
-  --disable-mdct \
-  --disable-rdft \
-  --disable-fft \
-  --disable-faan \
-  --disable-bzlib
+source ../build/build-dep-ffmpeg.sh
 
-make
-make install
-
-cd ../../build/
+cd ../build/
