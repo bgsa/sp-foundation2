@@ -32,13 +32,21 @@ void sp_video_stream_init_context(SpVideoStream* stream, const char* url)
     }
     av_dict_free(&options);
 
-    if (err < 0) {
-        std::cerr << "cannot open input" << std::endl;
+    if (err < 0) 
+    {
+        std::cerr << "cannot open input: " << err << std::endl;
+
+        char errorDescription[1024];
+        av_strerror(err, errorDescription, 1024);
+
+        std::cerr << errorDescription << std::endl;
+
         avformat_free_context(stream->streamContext);
     }
 
     err = avformat_find_stream_info(stream->streamContext, nullptr);
-    if (err < 0) {
+    if (err < 0) 
+    {
         std::cerr << "cannot find stream info" << std::endl;
         avformat_free_context(stream->streamContext);
     }
@@ -113,9 +121,9 @@ void sp_video_stream_properties_init(SpVideoStream* stream)
 void sp_video_stream_init(SpVideoStream* stream)
 {
 #ifdef DEBUG
-    //av_log_set_level(AV_LOG_DEBUG);
+    av_log_set_level(AV_LOG_DEBUG);
 #else
-    //av_log_set_level(AV_LOG_QUIET);
+    av_log_set_level(AV_LOG_QUIET);
 #endif
 
     stream->streamContext = avformat_alloc_context();
@@ -135,13 +143,28 @@ void sp_video_stream_init(SpVideoStream* stream)
 
 void sp_video_stream_open(SpVideoStream* stream, const sp_char* url, SpVideoStreamProperties* outputProperties)
 {
+ #ifdef DEBUG
+    outputProperties->format = AV_PIX_FMT_RGB24;
+    std::cout << "Width: " << outputProperties->width << std::endl;
+    std::cout << "Height: " << outputProperties->height << std::endl;
+    std::cout << "format: " << outputProperties->format << std::endl;
+    std::cout << "channels: " << outputProperties->channels << std::endl;
+    std::cout << "URL: " << url << std::endl;
+#endif
+
     stream->outputProperties = outputProperties;
 
     sp_video_stream_init_context(stream, url);
 
+    std::cout << "a" << std::endl;
+
     sp_video_stream_init_codec_context(stream);
 
+    std::cout << "b" << std::endl;
+
     sp_video_stream_properties_init(stream);
+
+    std::cout << "c" << std::endl;
 }
 
 sp_int sp_video_stream_frame_number(const SpVideoStream* const stream)
