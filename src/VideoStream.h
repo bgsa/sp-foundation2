@@ -21,12 +21,14 @@ EXTERN_C
         sp_float framesPerSeconds;
         sp_int readFrameStatus;
 
-        SpVideoStreamProperties outputProperties;
+        SpVideoStreamProperties* outputProperties;
     };
+
+    API_EXPORT void* sp_video_stream_create();
 
     API_EXPORT void sp_video_stream_init(SpVideoStream* stream);
 
-    API_EXPORT void sp_video_stream_open(SpVideoStream* stream, const sp_char* url, const SpVideoStreamProperties& outputProperties);
+    API_EXPORT void sp_video_stream_open(SpVideoStream* stream, const sp_char* url, SpVideoStreamProperties* outputProperties);
 
     API_EXPORT sp_int sp_video_stream_frame_number(const SpVideoStream* const stream);
 
@@ -44,7 +46,7 @@ EXTERN_C
 
     API_EXPORT void sp_video_stream_close(SpVideoStream* stream);
 
-    API_EXPORT void sp_video_stream_dispose(SpVideoStream* stream);
+    API_EXPORT void sp_video_stream_release(SpVideoStream* stream);
 
 }
 

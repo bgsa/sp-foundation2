@@ -12,6 +12,11 @@ void sp_video_stream_release_frame(AVFrame* frame)
     av_frame_free(&frame);
 }
 
+void* sp_video_stream_create()
+{
+    return std::malloc(sizeof(SpVideoStream));
+}
+
 void sp_video_stream_init_context(SpVideoStream* stream, const char* url)
 {
     AVDictionary* options = NULL;
@@ -128,7 +133,7 @@ void sp_video_stream_init(SpVideoStream* stream)
     stream->readFrameStatus = -1;
 }
 
-void sp_video_stream_open(SpVideoStream* stream, const sp_char* url, const SpVideoStreamProperties& outputProperties)
+void sp_video_stream_open(SpVideoStream* stream, const sp_char* url, SpVideoStreamProperties* outputProperties)
 {
     stream->outputProperties = outputProperties;
 
@@ -245,11 +250,11 @@ sp_bool sp_video_stream_next_frame(SpVideoStream* stream, sp_byte* data)
 
     SwsContext* conversor = sws_getContext(
         frame->width, frame->height, stream->videoCodecContext->pix_fmt,
-        stream->outputProperties.width, stream->outputProperties.height, stream->outputProperties.format,
+        stream->outputProperties->width, stream->outputProperties->height, stream->outputProperties->format,
         SWS_POINT, NULL, NULL, NULL
     );
 
-    sp_int dataStride = stream->outputProperties.channels * stream->outputProperties.width;
+    sp_int dataStride = stream->outputProperties->channels * stream->outputProperties->width;
 
     sws_scale(conversor, frame->data, frame->linesize, 0, frame->height, &data, &dataStride);
 
@@ -270,10 +275,13 @@ void sp_video_stream_close(SpVideoStream* stream)
     }
 }
 
-void sp_video_stream_dispose(SpVideoStream* stream)
+void sp_video_stream_release(SpVideoStream* stream)
 {
     if (stream->streamContext != nullptr)
     {
         avformat_free_context(stream->streamContext);
     }
+
+    std::free(stream);
+    stream = NULL;
 }

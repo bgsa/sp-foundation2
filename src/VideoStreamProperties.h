@@ -15,20 +15,13 @@ EXTERN_C
         sp_int channels;
     };
 
-    API_EXPORT inline void sp_video_stream_properties_init(SpVideoStreamProperties* properties)
-    {
-        properties->format = AV_PIX_FMT_NONE;
-        properties->width = properties->height = 0;
-        properties->channels = 0;
-    }
+    API_EXPORT void* sp_video_stream_properties_create();
 
-    API_EXPORT inline void sp_video_stream_properties_init_args(SpVideoStreamProperties* properties, sp_int width, sp_int height, AVPixelFormat format = AV_PIX_FMT_RGB24, sp_int channels = 3)
-    {
-        properties->width = width;
-        properties->height = height;
-        properties->format = format;
-        properties->channels = channels;
-    }
+    API_EXPORT void sp_video_stream_properties_init(SpVideoStreamProperties* properties);
+
+    API_EXPORT void sp_video_stream_properties_init_args(SpVideoStreamProperties* properties, sp_int width, sp_int height, AVPixelFormat format = AV_PIX_FMT_RGB24, sp_int channels = 3);
+
+    API_EXPORT void sp_video_stream_properties_release(SpVideoStreamProperties* properties);
 
 }
 
