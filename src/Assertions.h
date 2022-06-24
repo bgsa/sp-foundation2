@@ -3,6 +3,7 @@
 
 #if defined(DEBUG) && defined(SP_ASSERT_ENABLED)
 	#include <cassert>
+	#include <cstring>
 	#include <iostream>
 
 	#define sp_assert(condition, message)											\

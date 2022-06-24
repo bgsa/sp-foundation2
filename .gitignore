@@ -2,6 +2,7 @@
 .vs/
 build/lib/
 build/bin/
+build/output/
 
 # Vendor folders
 vendor/

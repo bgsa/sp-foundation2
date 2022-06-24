@@ -1,6 +1,7 @@
 #ifndef SP_VIDEO_STREAM_MANAGER_HEADER
 #define SP_VIDEO_STREAM_MANAGER_HEADER
 
+#include <thread>
 #include <queue>
 #include <mutex>
 #include <condition_variable>

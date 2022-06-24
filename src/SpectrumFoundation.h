@@ -34,7 +34,7 @@
 	#include "IOSPlatform.h"
 #endif
 
-#include "Assertions.h"
+#include <Assertions.h>
 //#include "SpStackMemoryAllocator.h"
 //#include "SpPoolMemoryAllocator.h"
 #include <cmath>
@@ -427,9 +427,9 @@ EXTERN_C
 	API_EXPORT inline sp_float sp_roundF(sp_float number, sp_int decimals)
 	{
 		const sp_float m = (number < 0.0f) ? -ONE_FLOAT : ONE_FLOAT; // check if input is negative
-		const sp_float power = std::powf(10.0f, (sp_float)decimals);
+		const sp_float power = powf(10.0f, (sp_float)decimals);
 
-		return (std::floorf(m * number * power + HALF_FLOAT) / power) * m;
+		return (floorf(m * number * power + HALF_FLOAT) / power) * m;
 	}
 
 	///<summary>
