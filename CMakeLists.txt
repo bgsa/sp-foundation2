@@ -10,7 +10,7 @@ option(ARCH             "Define the processor architecture (x86 / x86_64 / armv8
 option(FFMPEG_ENABLED   "Enable FFMPEG" ON)
 
 set (PROJECT_DIR  ${CMAKE_CURRENT_SOURCE_DIR})
-set (LIB_DIR ${PROJECT_DIR}/vendor/lib)
+set (LIB_DIR ${PROJECT_DIR}/vendor/lib/${ARCH})
 set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_DIR}/build/lib/${ARCH})
 set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_DIR}/build/lib/${ARCH})
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_DIR}/build/bin/${ARCH})
@@ -79,17 +79,37 @@ if ( ${IS_WINDOWS} )
 	list(APPEND CUSTOM_DEFINITIONS "-DWINDOWS")
 	list(APPEND CUSTOM_DEFINITIONS "-D_CRT_SECURE_NO_WARNINGS")
 
+	set(FFMPEG_AVFORMAT_LIB_NAME avformat.lib)
+	set(FFMPEG_AVSCALE_LIB_NAME  swscale.lib)
+	set(FFMPEG_AVCODEC_LIB_NAME  avcodec.lib)
+	set(FFMPEG_AVUTIL_LIB_NAME   avutil.lib)
+
 elseif ( ${IS_LINUX} )
 	list(APPEND CUSTOM_DEFINITIONS "-DLINUX")
 	list(APPEND CUSTOM_DEFINITIONS "-Wno-dangling-else")
+
+	set(FFMPEG_AVFORMAT_LIB_NAME libavformat.so)
+	set(FFMPEG_AVSCALE_LIB_NAME  libswscale.so)
+	set(FFMPEG_AVCODEC_LIB_NAME  libavcodec.so)
+	set(FFMPEG_AVUTIL_LIB_NAME   libavutil.so)
 
 elseif ( ${IS_MACOS} )
 	list(APPEND CUSTOM_DEFINITIONS "-DMACOS")
 	list(APPEND CUSTOM_DEFINITIONS "-Wno-dangling-else")
 
+	set(FFMPEG_AVFORMAT_LIB_NAME libavformat.so)
+	set(FFMPEG_AVSCALE_LIB_NAME  libswscale.so)
+	set(FFMPEG_AVCODEC_LIB_NAME  libavcodec.so)
+	set(FFMPEG_AVUTIL_LIB_NAME   libavutil.so)
+
 elseif ( ${IS_ANDROID} )
 	list(APPEND CUSTOM_DEFINITIONS "-DANDROID")
 	list(APPEND CUSTOM_DEFINITIONS "-Wno-dangling-else")
+
+	set(FFMPEG_AVFORMAT_LIB_NAME libavformat.so)
+	set(FFMPEG_AVSCALE_LIB_NAME  libswscale.so)
+	set(FFMPEG_AVCODEC_LIB_NAME  libavcodec.so)
+	set(FFMPEG_AVUTIL_LIB_NAME   libavutil.so)
 
 else()
     message(FATAL_ERROR "Operating System not defined!")
@@ -135,11 +155,13 @@ list(JOIN CUSTOM_DEFINITIONS " " CUSTOM_DEFINITIONS)
 message(STATUS "FLAGS: " ${CUSTOM_DEFINITIONS})
 add_definitions( ${CUSTOM_DEFINITIONS} )
 
+message(STATUS "XXX: " ${FFMPEG_AVFORMAT_LIB_NAME})
+
 if ( ${FFMPEG_ENABLED} )
 	target_link_libraries(${PROJECT_NAME}
-		avformat.lib
-		swscale.lib
-		avutil.lib
-		avcodec.lib
+		${FFMPEG_AVFORMAT_LIB_NAME}
+		${FFMPEG_AVSCALE_LIB_NAME}
+		${FFMPEG_AVCODEC_LIB_NAME}
+		${FFMPEG_AVUTIL_LIB_NAME}
 	)
 endif()
