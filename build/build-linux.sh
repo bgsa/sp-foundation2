@@ -19,4 +19,4 @@ cmake --build . --config Debug
 
 cd ../
 
-# clear_build_dir
+clear_dir $BUILD_DIR
