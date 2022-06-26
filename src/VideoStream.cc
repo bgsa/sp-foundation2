@@ -16,7 +16,30 @@ void sp_video_stream_release_frame(AVFrame* frame)
 
 void* sp_video_stream_create()
 {
-    return std::malloc(sizeof(SpVideoStream));
+    SpVideoStream* stream = (SpVideoStream*) std::malloc(sizeof(SpVideoStream));
+
+#ifdef DEBUG
+    //av_log_set_level(AV_LOG_DEBUG | AV_LOG_VERBOSE);
+    av_log_set_level(AV_LOG_VERBOSE | AV_LOG_DEBUG | AV_LOG_ERROR);
+#else
+    av_log_set_level(AV_LOG_QUIET);
+#endif
+
+    stream->streamContext = nullptr;
+    stream->videoCodecContext = nullptr;
+    stream->videoCodecId = AV_CODEC_ID_NONE;
+    stream->audioCodecId = AV_CODEC_ID_NONE;
+    stream->videoStreamIndex = -1;
+
+    stream->width = stream->height = 0;
+    stream->duration = 0;
+    stream->bitRate = 0;
+
+    stream->framesPerSeconds = 0.0f;
+
+    stream->readFrameStatus = -1;
+
+    return stream;
 }
 
 void sp_video_stream_init_context(SpVideoStream* stream, const char* url)
@@ -28,6 +51,7 @@ try_again:
     //av_dict_set(&options, "video_size", "640x480", 0);
     //av_dict_set(&options, "pixel_format", "rgb24", 0);
 
+    stream->streamContext = avformat_alloc_context();
     sp_int err = avformat_open_input(&stream->streamContext, url, nullptr, &options);
 
     AVDictionaryEntry* e;
@@ -47,6 +71,9 @@ try_again:
 
         std::cerr << errorDescription << std::endl;
 
+        avformat_free_context(stream->streamContext);
+        stream->streamContext = nullptr;
+
         if (errno == EINTR) // Interrupted System Call ??
         {
             if (attempt < 100)
@@ -57,9 +84,6 @@ try_again:
                 goto try_again;
             }
         }
-
-        avformat_free_context(stream->streamContext);
-        stream->streamContext = nullptr;
         return;
     }
 
@@ -68,6 +92,7 @@ try_again:
     {
         std::cerr << "Error: cannot find stream info: " << err << std::endl;
         avformat_free_context(stream->streamContext);
+        stream->streamContext = nullptr;
         return;
     }
 
@@ -157,30 +182,6 @@ void sp_video_stream_properties_init(SpVideoStream* stream)
     stream->height = videoStream->codecpar->height;
 }
 
-void sp_video_stream_init(SpVideoStream* stream)
-{
-#ifdef DEBUG
-    //av_log_set_level(AV_LOG_DEBUG | AV_LOG_VERBOSE);
-    av_log_set_level(AV_LOG_VERBOSE | AV_LOG_DEBUG | AV_LOG_ERROR);
-#else
-    av_log_set_level(AV_LOG_QUIET);
-#endif
-
-    stream->streamContext = avformat_alloc_context();
-    stream->videoCodecContext = nullptr;
-    stream->videoCodecId = AV_CODEC_ID_NONE;
-    stream->audioCodecId = AV_CODEC_ID_NONE;
-    stream->videoStreamIndex = -1;
-
-    stream->width = stream->height = 0;
-    stream->duration = 0;
-    stream->bitRate = 0;
-
-    stream->framesPerSeconds = 0.0f;
-
-    stream->readFrameStatus = -1;
-}
-
 void sp_video_stream_open(SpVideoStream* stream, const sp_char* url, SpVideoStreamProperties* outputProperties)
 {
  #ifdef DEBUG
@@ -191,20 +192,13 @@ void sp_video_stream_open(SpVideoStream* stream, const sp_char* url, SpVideoStre
     std::cout << "channels: " << outputProperties->channels << std::endl;
     std::cout << "URL: " << url << std::endl;
 #endif
-
     stream->outputProperties = outputProperties;
 
     sp_video_stream_init_context(stream, url);
 
-    std::cout << "a" << std::endl;
-
     sp_video_stream_init_codec_context(stream);
 
-    std::cout << "b" << std::endl;
-
     sp_video_stream_properties_init(stream);
-
-    std::cout << "c" << std::endl;
 }
 
 sp_int sp_video_stream_frame_number(const SpVideoStream* const stream)

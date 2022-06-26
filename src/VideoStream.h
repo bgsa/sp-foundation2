@@ -26,8 +26,6 @@ EXTERN_C
 
     API_EXPORT void* sp_video_stream_create();
 
-    API_EXPORT void sp_video_stream_init(SpVideoStream* stream);
-
     API_EXPORT void sp_video_stream_open(SpVideoStream* stream, const sp_char* url, SpVideoStreamProperties* outputProperties);
 
     API_EXPORT sp_int sp_video_stream_frame_number(const SpVideoStream* const stream);
