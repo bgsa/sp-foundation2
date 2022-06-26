@@ -1,6 +1,8 @@
 #include <VideoStream.h>
 #include <cassert>
 #include <iostream>
+#include <thread>
+#include <chrono>
 
 void sp_video_stream_release_packet(AVPacket* packet)
 {
@@ -19,6 +21,9 @@ void* sp_video_stream_create()
 
 void sp_video_stream_init_context(SpVideoStream* stream, const char* url)
 {
+    sp_ushort attempt = 1;
+try_again:
+
     AVDictionary* options = NULL;
     //av_dict_set(&options, "video_size", "640x480", 0);
     //av_dict_set(&options, "pixel_format", "rgb24", 0);
@@ -35,20 +40,52 @@ void sp_video_stream_init_context(SpVideoStream* stream, const char* url)
     if (err < 0) 
     {
         std::cerr << "cannot open input: " << err << std::endl;
+        std::cerr << "Errono: " << errno << std::endl;
 
         char errorDescription[1024];
         av_strerror(err, errorDescription, 1024);
 
         std::cerr << errorDescription << std::endl;
 
+        if (errno == EINTR) // Interrupted System Call ??
+        {
+            if (attempt < 100)
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+                attempt++;
+                std::cerr << "Attempt " << attempt << "..." << std::endl;
+                goto try_again;
+            }
+        }
+
         avformat_free_context(stream->streamContext);
+        stream->streamContext = nullptr;
+        return;
     }
 
     err = avformat_find_stream_info(stream->streamContext, nullptr);
     if (err < 0) 
     {
-        std::cerr << "cannot find stream info" << std::endl;
+        std::cerr << "Error: cannot find stream info: " << err << std::endl;
         avformat_free_context(stream->streamContext);
+        return;
+    }
+
+    auto streamsLength = stream->streamContext->nb_streams;
+    if (streamsLength == 0)
+    {
+        std::cerr << "Error: No Streams found! " << std::endl;
+
+        avformat_free_context(stream->streamContext);
+        stream->streamContext = nullptr;
+        
+        if (attempt < 100)
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            attempt++;
+            std::cerr << "Attempt " << attempt << "..." << std::endl;
+            goto try_again;
+        }
     }
 }
 
@@ -83,6 +120,7 @@ void sp_video_stream_init_codec_context(SpVideoStream* stream)
     {
         std::cerr << "failed to find find video stream" << std::endl;
         avformat_free_context(stream->streamContext);
+        return;
     }
 
     const AVCodec* decoder = avcodec_find_decoder(stream->videoCodecId);
@@ -92,6 +130,7 @@ void sp_video_stream_init_codec_context(SpVideoStream* stream)
     if (avcodec_open2(stream->videoCodecContext, decoder, NULL) < 0)
     {
         std::cerr << "Error to open Video Decoder" << std::endl;
+        return;
     }
 }
 
@@ -121,7 +160,8 @@ void sp_video_stream_properties_init(SpVideoStream* stream)
 void sp_video_stream_init(SpVideoStream* stream)
 {
 #ifdef DEBUG
-    av_log_set_level(AV_LOG_DEBUG);
+    //av_log_set_level(AV_LOG_DEBUG | AV_LOG_VERBOSE);
+    av_log_set_level(AV_LOG_VERBOSE | AV_LOG_DEBUG | AV_LOG_ERROR);
 #else
     av_log_set_level(AV_LOG_QUIET);
 #endif
