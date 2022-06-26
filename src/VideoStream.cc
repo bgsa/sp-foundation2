@@ -42,7 +42,7 @@ void* sp_video_stream_create()
     return stream;
 }
 
-void sp_video_stream_init_context(SpVideoStream* stream, const char* url)
+bool sp_video_stream_init_context(SpVideoStream* stream, const char* url)
 {
     sp_ushort attempt = 1;
 try_again:
@@ -84,7 +84,8 @@ try_again:
                 goto try_again;
             }
         }
-        return;
+
+        return false;
     }
 
     err = avformat_find_stream_info(stream->streamContext, nullptr);
@@ -93,7 +94,7 @@ try_again:
         std::cerr << "Error: cannot find stream info: " << err << std::endl;
         avformat_free_context(stream->streamContext);
         stream->streamContext = nullptr;
-        return;
+        return false;
     }
 
     auto streamsLength = stream->streamContext->nb_streams;
@@ -112,9 +113,11 @@ try_again:
             goto try_again;
         }
     }
+
+    return true;
 }
 
-void sp_video_stream_init_codec_context(SpVideoStream* stream)
+bool sp_video_stream_init_codec_context(SpVideoStream* stream)
 {
     auto streamsLength = stream->streamContext->nb_streams;
 
@@ -145,7 +148,8 @@ void sp_video_stream_init_codec_context(SpVideoStream* stream)
     {
         std::cerr << "failed to find find video stream" << std::endl;
         avformat_free_context(stream->streamContext);
-        return;
+        stream->streamContext = nullptr;
+        return false;
     }
 
     const AVCodec* decoder = avcodec_find_decoder(stream->videoCodecId);
@@ -155,8 +159,12 @@ void sp_video_stream_init_codec_context(SpVideoStream* stream)
     if (avcodec_open2(stream->videoCodecContext, decoder, NULL) < 0)
     {
         std::cerr << "Error to open Video Decoder" << std::endl;
-        return;
+        avformat_free_context(stream->streamContext);
+        stream->streamContext = nullptr;
+        return false;
     }
+
+    return true;
 }
 
 void sp_video_stream_properties_init(SpVideoStream* stream)
@@ -194,9 +202,11 @@ void sp_video_stream_open(SpVideoStream* stream, const sp_char* url, SpVideoStre
 #endif
     stream->outputProperties = outputProperties;
 
-    sp_video_stream_init_context(stream, url);
+    if (!sp_video_stream_init_context(stream, url))
+        return;
 
-    sp_video_stream_init_codec_context(stream);
+    if (!sp_video_stream_init_codec_context(stream))
+        return;
 
     sp_video_stream_properties_init(stream);
 }
